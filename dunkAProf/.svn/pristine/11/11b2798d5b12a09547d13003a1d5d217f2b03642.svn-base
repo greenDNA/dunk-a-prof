@@ -1,0 +1,102 @@
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+
+public class Projectile {
+    private Image image;
+    private double xPosition;
+    private double yPosition;
+    boolean fired = false;
+    private double accelerationX = 0;
+    private double accelerationY = -9.8 * 80;
+    private double deltaTime = 0.01;
+    private double angle = 45;
+    private double velocity = 30  * 80;
+    private double velocityX;
+    private double velocityY;
+    public Projectile(String fileName, double xPosition, double yPosition) {
+        try {
+            image = ( ImageIO.read(new File(fileName)) ).getScaledInstance(50, 50, Image.SCALE_DEFAULT); // Read in the file and scale it
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.xPosition = xPosition; // Initialize the x Position of the projectile
+        this.yPosition = yPosition; // Initialize the y Position of the projectile
+        // These are the initial velocities
+        this.velocityX = this.velocity * Math.cos(this.angle * (Math.PI/180.0) );
+        this.velocityY = this.velocity * Math.sin(this.angle*(Math.PI/180.0));
+        //System.out.println("" + (2 * (this.velocityX * this.velocityX * Math.sin(2 * this.angle * (Math.PI/180.0)))/9.8 ));
+        //System.out.println("" + ((this.velocity * this.velocity * Math.sin( 2* this.angle * (Math.PI/180.0)))/9.8));
+    }
+
+    public void fire() {
+        fired = true;
+    }  // end of draw()
+
+    public void draw(Graphics graphics) {
+
+        // If the projectile is in the state of being fired, draw the projectile.
+        if(fired) {
+            graphics.drawImage(image, (int)this.xPosition, (int)this.yPosition, null);
+        }
+
+    }
+
+    public void move(int xPosition, int yPosition) {
+        if (fired) {
+
+            this.xPosition += (this.velocityX * this.deltaTime + this.accelerationX * this.deltaTime * this.deltaTime * 0.5);
+            this.yPosition -= (this.velocityY * this.deltaTime+ this.accelerationY * this.deltaTime * this.deltaTime * 0.5);
+            //System.out.println("" + this.xPosition + " " + this.yPosition);
+            this.velocityX += this.accelerationX*this.deltaTime;
+            this.velocityY += this.accelerationY*this.deltaTime;
+            //Reset the projectile to its original location if it goes beyond the bounds of the JPanel
+            if(this.yPosition < 0 || this.yPosition > 600 ) {
+                fired = false;
+                this.xPosition = xPosition;
+                this.yPosition = yPosition;
+                this.velocityX = this.velocity * Math.cos(this.angle * (Math.PI/180.0) );
+                this.velocityY = this.velocity * Math.sin(this.angle*(Math.PI/180.0));
+            }
+        } else {
+            this.xPosition = xPosition;
+            this.yPosition = yPosition;
+        }
+
+    }
+
+    public double getXPosition() {
+        return xPosition;
+    }
+
+    public double getYPosition() {
+        return yPosition;
+    }
+
+    //Return the bounding box surrounding the image
+    public Rectangle getBoundingBox() {
+        return new Rectangle((int)this.xPosition, (int)this.yPosition, this.image.getWidth(null), this.image.getHeight(null));
+    }
+
+
+    public int getWidth() {
+        return image.getWidth(null);
+    }
+
+    public int getHeight() {
+        return image.getHeight(null);
+    }
+
+    public void increaseAngle() {
+        this.angle++;
+    }
+
+    public void decreaseAngle() {
+        this.angle--;
+    }
+}

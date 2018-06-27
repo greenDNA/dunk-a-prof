@@ -1,0 +1,58 @@
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+/**
+ * Constructs a new object which represents a pool on the JPanel.
+ *
+ * @param	fileName	-	The filename of the pool's image
+ * @param	xPosition	-	The pool's initial x coordinate on the JPanel
+ * @param	yPosition	-	The pool's initial y coordinate on the JPanel
+ */
+public class Pool {
+    private Image image;
+    int xPosition;
+    int yPosition;
+    public Pool(String fileName, int xPosition, int yPosition) {
+        try {
+            image = ( ImageIO.read(new File(fileName)) ).getScaledInstance(130, 210, Image.SCALE_DEFAULT); // Read in the file and scale it
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
+
+    }
+    /**
+     * This method draws the image of a pool to the JPanel.
+     *
+     * @param	graphics	A graphics object which is a reference to the JPanel
+     */
+    public void draw(Graphics graphics) {
+        graphics.drawImage(image, xPosition, yPosition, null);
+
+    }
+
+    /**
+     * This method returns a Rectangle which is used to detect collision with the top part of the pool
+     *
+     * @return  Rectangle	-	A Rectangle object used to detect collision with the top part of the bounding box
+     */
+    public Rectangle getTopBoundingBox() {
+        return new Rectangle(this.xPosition, this.yPosition + (image.getHeight(null)/2),image.getWidth(null), 1 );
+    }
+
+    /**
+     * This method returns a Rectangle which is used to detect collision with the bottom part of the pool
+     *
+     * @return  Rectangle	-	A Rectangle object used to detect collision with the bottom part of the bounding box.
+     */
+    public Rectangle getBottomBoundingBox() {
+        return new Rectangle(this.xPosition, this.yPosition + image.getHeight(null), image.getWidth(null), 1);
+    }
+}

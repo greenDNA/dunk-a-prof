@@ -1,0 +1,138 @@
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.Graphics;
+import java.io.File;
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
+
+// maybe update every 20 ms or something small like that, because there's no way java can
+// handle calling watch.run() every millisecond.
+
+
+public class Clock  {
+	 
+    /**
+     * This is used to store the game's time limit
+     * timeInSeconds is the clock time displayed on screen,
+     * while timeInMilliseconds is used to actually keep track
+     * of the time remaining in the game
+     */
+
+    private int timeInSeconds;
+    private int timeInMilliseconds;
+
+    private int TIME_UPDATE_RATE = 20; // interval at which time is updated, in milliseconds
+
+    
+    /**
+     * This is used to store the font used for the clock.
+     */
+
+    private Font font;
+	 
+    /**
+     * This is used to schedule a decrement of the time every second
+     */
+
+    private Timer timer;
+	 
+    /**
+     * This is used to store the x coordinate of the clock.
+     */
+
+    private int xPosition;
+	 
+    /**
+     * This is used to store the y coordinate of the clock.
+     */
+
+    private int yPosition;
+	 
+    /**
+     * This is the thread called by timer every second to decrement the time.
+     */
+
+    Watch watch  = new Watch();
+	
+    /**
+     * This constructs a clock object which represents 
+     *
+     * @param  graphics	-	A reference to the JPanel buffer
+     */
+    public Clock(String fileName, int xPosition, int yPosition, int timeInSeconds) {
+	try {
+	    font = Font.createFont(Font.TRUETYPE_FONT, new File(fileName));
+	    font = font.deriveFont(36f);
+	} catch (FontFormatException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	this.xPosition = xPosition;
+	this.yPosition = yPosition;
+	this.timeInSeconds = timeInSeconds;
+
+	this.timeInMilliseconds = timeInSeconds * 1000;
+	
+	timer = new Timer();
+	timer.schedule(watch, 0, TIME_UPDATE_RATE);
+		
+    }
+	
+    /**
+     * This method draws the clock to the JPanel
+     *
+     * @param  graphics	-	A reference to the JPanel buffer
+     */
+    public void draw(Graphics graphics) {
+	graphics.setFont(font);
+	graphics.drawString("Time \t\t" + timeInSeconds + "", this.xPosition, this.yPosition);
+    }
+	
+    /**
+     * This method returns the game's time limit
+     *
+     * @return  timeInSeconds	-	The game's time limit 
+     */
+    public int getTimeInSeconds() {
+	return timeInSeconds;
+    }
+    /**
+     * Tests if timeInMilliseconds is equal to or less than (timeInSeconds - 1)
+     * and if so, decrement timeInSeconds by 1
+     *
+     */
+    public void updateTimeInSeconds() {
+	//test if timeInMilliseconds is equal or less than timeInSeconds - 1
+	if(timeInMilliseconds <= (timeInSeconds - 1) * 1000) {
+	    timeInSeconds--;
+	}
+    }
+    
+    /**
+     * This method stops the clock.
+     */
+    public void stopClock() {
+	watch.cancel();
+    }
+	
+    /**
+     * This method allows you to resume the clock from where it left of when you stopped it.
+     */
+    public void resumeClock() {
+	this.watch = new Watch();
+	this.timer = new Timer();
+	this.timer.schedule(watch, 0, TIME_UPDATE_RATE);
+    }
+	
+    class Watch extends TimerTask {
+	public void run() {
+	    timeInMilliseconds -= TIME_UPDATE_RATE;
+	    updateTimeInSeconds();
+	}
+    }
+}

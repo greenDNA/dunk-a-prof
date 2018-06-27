@@ -1,0 +1,115 @@
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Vector;
+
+import javax.imageio.ImageIO;
+
+
+public class Animation {
+
+    /**
+     * This is used to store the frames of the animation.
+     */
+    private Vector <Image> animationImages = new Vector<Image>();
+
+    /**
+     * This indicates how many frames should be skipped before switching
+     * to the next animation frame.
+     */
+    private int frameSkip;
+
+    /**
+     * This is used to indicate which animation frame is currently being displayed.
+     */
+    private int currentFrame;
+
+    /**
+     * This indicates if the animation is playing
+     */
+    private boolean isPlaying = false;
+
+    /**
+     * This indicates if the animation will loop.
+     */
+    private boolean isLooping = false;
+
+    /**
+     * This stores the amount of animation frames.
+     */
+    private int frameQuantity;
+
+    /**
+     * Constructs the animation object which is used to store and control the animation.
+     *
+     * @param	fileName	-	The name of the sequence of frames of the animation
+     * @param	frameQuantity	-	This is used to store the amount of frames of the animation
+     * @param	frameSkip	-	This indicates how many frames should be skipped before switching to the next animation frame.
+     */
+    public Animation(String fileName, int frameQuantity, int frameSkip ) {
+        for(int i = 0; i < frameQuantity; i++) {
+            try {
+                animationImages.add(ImageIO.read(new File(fileName + i + ".png")));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        this.frameSkip = frameSkip;
+        this.frameQuantity = frameQuantity;
+    }
+
+    /**
+     * This is used to start the animation.
+     */
+    public void playAnimation() {
+        isPlaying = true;
+    }
+
+    /**
+     * This causes the animation to loop.
+     */
+    public void loopAnimation() {
+        isLooping = true;
+    }
+
+    /**
+     * This is used to return the image which represents the current frame of the animation.
+     * @return	Image	-	An Image object that is a reference to the image that represents the current frame of the animation.
+     */
+    public Image getImage() {
+        // If the animation is playing return the current animation frame. Otherwise return a transparent frame.
+        if(isPlaying) {
+            return animationImages.get(currentFrame/frameSkip);
+        } else {
+            return getTransparentImage(animationImages.get(currentFrame/frameSkip));
+        }
+
+    }
+
+    /**
+     * This is used to update the state of the animation.
+     */
+    public void update() {
+        if(isPlaying) {
+            currentFrame++;
+            if(currentFrame > ( (frameQuantity - 1) * frameSkip)) {
+                currentFrame = 0;
+                if(!isLooping) {
+                    isPlaying = false;
+                }
+            }
+        }
+    }
+
+    /**
+     * 	This is used to return a transparent image that is the size of the animation. When the animation isn't playing,
+     * 	this is returned instead of the current frame.
+     * 	@return	A BufferedImage object that is transparent.
+     */
+    public Image getTransparentImage(Image image) {
+        return new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+    }
+
+}

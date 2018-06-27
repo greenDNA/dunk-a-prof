@@ -1,0 +1,4 @@
+
+public enum Location {
+    WEST, CENTER, EAST
+}

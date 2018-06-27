@@ -1,0 +1,123 @@
+import java.awt.Container;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
+import javax.swing.JFrame;
+
+/**
+ *	The slider moves back and forth. When you hit a button, the slider will fire a projectile.
+ *	When the projectile hits a person, he will scream, the score counter will increment, and the person will get dunked.
+ *	As this is happening, a clock is ticking down. When the clock reaches 0, the game ends. P pauses the game and space fires the projectile.
+ *	TODO: Implement a method to change the speed of the slider as a difficulty setting.
+ *	TODO: Implement targets that, when hit, dunk the person.
+ *	@author     Osher Cohen
+ *	@version	1.0
+ */
+
+
+public class DunkAProf extends JFrame implements WindowListener {
+
+    /**
+     *	This is used for serialization.
+     */
+    private static final long serialVersionUID = 1L;
+    
+    /**
+     * This is a reference to the JPanel where all the action takes place.
+     */
+    private GamePanel gamePanel;
+    
+    /**
+     * This is used to detect if the JFrame has been closed.
+     */
+    private Boolean frameIsClosed = false;
+    
+    /**
+     * Constructs the JFrame
+     */
+    public DunkAProf() {
+        super("DunkAProf");
+        makeGUI();
+        addWindowListener( this );
+        pack();
+        setResizable(false);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }  												// end of DunkAProf() constructor
+    
+    /**
+     * This is used to set up the JFrame's gui.
+     */
+    private void makeGUI() {
+    	// The default BorderLayout is used
+        Container container = getContentPane();    
+        
+        gamePanel = new GamePanel(this);
+
+        // Add the gamePanel to the window container
+        container.add(gamePanel, "Center");
+
+    }  // end of makeGUI()
+
+    @Override
+    public void windowActivated(WindowEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void windowClosed(WindowEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+    
+    @Override
+    public void windowClosing(WindowEvent arg0) {
+    	
+    	// If the window is closing, stop the game.
+        gamePanel.stopGame();
+        
+        //Indicate that the JFrame is closed.
+        this.frameIsClosed = true;
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent arg0) {
+      
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+        
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+        
+
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+        
+
+    }
+    
+    /**
+     * This method is used to check if the JFrame is closed.
+     *
+     * @param  graphics	A reference to the JPanel buffer
+     * @return	True if the JFrame is closed. Otherwise, it returns false.
+     */
+    public boolean isClosed() {
+    	return this.frameIsClosed;
+    }
+    
+    public static void main(String args[]) {
+        new DunkAProf();
+    }
+
+}

@@ -1,0 +1,1 @@
+P pauses the game and space fires the projectile.

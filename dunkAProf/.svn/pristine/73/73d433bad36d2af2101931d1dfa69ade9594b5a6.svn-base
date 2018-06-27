@@ -1,0 +1,93 @@
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
+
+public class Projectile {
+    private Image image;
+    private int xPosition;
+    private int yPosition;
+    private volatile 
+    boolean fired = false;
+    
+    private int angleChange;
+    
+    public Projectile(String fileName, int xPosition, int yPosition) {
+        try {
+            //image = ( ImageIO.read(new File(fileName)) ).getScaledInstance(50, 50, Image.SCALE_DEFAULT); // Read in the file and scale it
+        	image = ( ImageIO.read(new File(fileName)) ).getScaledInstance(20, 20, Image.SCALE_DEFAULT); // Read in the file and scale it
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.xPosition = xPosition; // Initialize the x Position of the projectile
+        this.yPosition = yPosition; // Initialize the y Position of the projectile
+    }
+
+    public void fire() {
+        fired = true;
+    }  // end of draw()
+
+    public void draw(Graphics graphics) {
+    	
+    	// If the projectile is in the state of being fired, draw the projectile.
+        if(fired) { 						
+            graphics.drawImage(image, this.xPosition, this.yPosition, null);
+        }
+        
+    }
+
+    public void move(int xPosition, int yPosition) {
+        if (fired) {
+            this.yPosition -= 30;
+            this.xPosition += this.angleChange;
+            
+            //Reset the projectile to its original location if it goes beyond the bounds of the JPanel
+            if(this.yPosition < 0) {
+                fired = false;
+                this.xPosition = xPosition;
+                this.yPosition = yPosition;
+            }
+        } else {
+            this.xPosition = xPosition;
+            this.yPosition = yPosition;
+        }
+        
+    }
+    
+    public int getXPosition() {
+    	return xPosition;
+    }
+    
+    public int getYPosition() {
+    	return yPosition;
+    }
+    
+    //Return the bounding box surrounding the image
+    public Rectangle getBoundingBox() {
+    	return new Rectangle(this.xPosition, this.yPosition, this.image.getWidth(null), this.image.getHeight(null));
+    }
+    
+    
+    public int getWidth() {
+    	return image.getWidth(null);
+    }
+    
+    public int getHeight() {
+    	return image.getHeight(null);
+    }
+    
+    public void tiltProjectileLeft() {
+    	angleChange = -30;
+    }
+    
+    public void tiltProjectileRight() {
+    	angleChange = 30;
+    }
+    
+    public void aimProjectileForward() {
+    	angleChange = 0;
+    }
+}
